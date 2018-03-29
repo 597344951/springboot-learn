@@ -1,0 +1,17 @@
+{"properties": [
+  {
+    "name": "typeAliasesPackage",
+    "type": "java.lang.String",
+    "description": "A description for 'typeAliasesPackage'"
+  },
+  {
+    "name": "shiro.config.hash-algorithm-name",
+    "type": "java.lang.String",
+    "description": "A description for 'shiro.config.hash-algorithm-name'"
+  },
+  {
+    "name": "shiro.config.hash-iterations",
+    "type": "java.lang.String",
+    "description": "A description for 'shiro.config.hash-iterations'"
+  }
+]}

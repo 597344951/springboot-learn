@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.demo.dao.SyslogDao" >
+	<select id="querySyslog" resultType="com.example.demo.bean.Syslog">
+		select * from sys_log
+	</select>
+	<select id="querySyslogByPage" resultType="com.example.demo.bean.Syslog">
+		select * from sys_log
+	</select>
+	<insert id="saveSyslog" parameterType="com.example.demo.bean.Syslog">
+		insert into sys_log(username,operation,method,params,ip,time,create_date)
+		values(#{username},#{operation},#{method},#{params},#{ip},now(),now())
+	</insert>
+	
+
+</mapper>
