@@ -37,7 +37,8 @@ public class Login {
         try {
             Assert.notNull(un, "用户名不能为空");
             Assert.notNull(ps == null ? tks : ps, "密码或token值不能为空!");
-            UsernamePasswordToken token = new UsernamePasswordToken(un, ps);
+            UsernamePasswordToken token =
+                    new UsernamePasswordToken(un, StringUtils.isEmpty(ps) ? tks : ps);
             SecurityUtils.getSubject().login(token);
         } catch (IncorrectCredentialsException ie) {
             // 验证不通过

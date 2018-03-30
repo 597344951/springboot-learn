@@ -19,27 +19,24 @@ import org.apache.shiro.web.util.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.common.util.CacheUtil;
+
 /**
  * Reason: 单用户登陆控制
  */
 public class KickoutSessionControlFilter extends AccessControlFilter {
-    
+
     public static final Logger log = LoggerFactory.getLogger(KickoutSessionControlFilter.class);
 
 
-    private String kickoutUrl; // 踢出后到的地址
     private boolean kickoutAfter = false; // 踢出之前登录的/之后登录的用户 默认踢出之前登录的用户
     private int maxSession = 1; // 同一个帐号最大会话数 默认1
-    
+
     private SessionManager sessionManager;
     private Cache<String, Deque<Serializable>> cache;
-    
-    public void setCacheManager(CacheManager cacheManager) {
-        this.cache = cacheManager.getCache("shiro-kickout-session");
-    }
 
-    public void setKickoutUrl(String kickoutUrl) {
-        this.kickoutUrl = kickoutUrl;
+    public void setCacheManager(CacheManager cacheManager) {
+        this.cache = cacheManager.getCache(CacheUtil.KICKOUT_SESSION);
     }
 
     public void setKickoutAfter(boolean kickoutAfter) {
@@ -56,13 +53,14 @@ public class KickoutSessionControlFilter extends AccessControlFilter {
 
 
     @Override
-    protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue)
-            throws Exception {
+    protected boolean isAccessAllowed(ServletRequest request, ServletResponse response,
+            Object mappedValue) throws Exception {
         return false;
     }
 
     @Override
-    protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
+    protected boolean onAccessDenied(ServletRequest request, ServletResponse response)
+            throws Exception {
         Subject subject = getSubject(request, response);
         if (!subject.isAuthenticated() && !subject.isRemembered()) {
             // 如果没有登录，直接进行之后的流程
@@ -73,7 +71,7 @@ public class KickoutSessionControlFilter extends AccessControlFilter {
         String username = (String) subject.getPrincipal();
         Serializable sessionId = session.getId();
 
-        // 
+        //
         Deque<Serializable> deque = cache.get(username);
         if (deque == null) {
             deque = new LinkedList<Serializable>();
@@ -94,9 +92,10 @@ public class KickoutSessionControlFilter extends AccessControlFilter {
                 kickoutSessionId = deque.removeLast();
             }
             try {
-                Session kickoutSession = sessionManager.getSession(new DefaultSessionKey(kickoutSessionId));
+                Session kickoutSession =
+                        sessionManager.getSession(new DefaultSessionKey(kickoutSessionId));
                 if (kickoutSession != null) {
-                    kickoutSession.stop();//清除会话
+                    kickoutSession.stop();// 清除会话
                 }
             } catch (Exception e) {// ignore exception
                 log.error(e.getMessage());

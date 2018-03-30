@@ -11,6 +11,8 @@ import org.apache.shiro.cache.CacheManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.common.util.CacheUtil;
+
 
 /**
  * 用户凭据管理 加密 和 登陆次数限制
@@ -23,7 +25,7 @@ public class RetryLimitHashedCredentialsMatcher extends HashedCredentialsMatcher
     private Cache<String, AtomicInteger> passwordRetryCache;
 
     public RetryLimitHashedCredentialsMatcher(CacheManager cacheManager) {
-        passwordRetryCache = cacheManager.getCache("passwordRetryCache");
+        passwordRetryCache = cacheManager.getCache(CacheUtil.PASSWORD_RETRY);
     }
 
     @Override

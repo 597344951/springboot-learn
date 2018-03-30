@@ -10,7 +10,6 @@ import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.cache.ehcache.EhCacheManager;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.mgt.SessionManager;
-import org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO;
 import org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator;
 import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.apache.shiro.session.mgt.eis.SessionIdGenerator;
@@ -24,7 +23,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.filter.DelegatingFilterProxy;
 
 import com.common.shiro.credentials.RetryLimitHashedCredentialsMatcher;
@@ -115,7 +113,10 @@ public class ShiroConfig {
         userRealm.setCachingEnabled(true);
 
         userRealm.setAuthenticationCachingEnabled(true);
-        userRealm.setAuthenticationCacheName("authenticationCache");
+        userRealm.setAuthenticationCacheName("authenticationCache_up");
+        
+        userRealm.setAuthorizationCachingEnabled(true);
+        userRealm.setAuthorizationCacheName("authorizationCache");
         log.debug("UserRealm bean 已创建");
         return userRealm;
     }
@@ -127,7 +128,10 @@ public class ShiroConfig {
         userRealm.setCachingEnabled(true);
 
         userRealm.setAuthenticationCachingEnabled(true);
-        userRealm.setAuthenticationCacheName("authenticationCache");
+        userRealm.setAuthenticationCacheName("authenticationCache_token");
+        
+        userRealm.setAuthorizationCachingEnabled(true);
+        userRealm.setAuthorizationCacheName("authorizationCache");
         log.debug("TokenRealm bean 已创建");
         return userRealm;
     }
@@ -164,7 +168,6 @@ public class ShiroConfig {
         filter.setSessionManager(sessionManager);
         filter.setKickoutAfter(false);// true:剔除后登陸的，false:剔除前面登陸的
         filter.setMaxSession(1);// 一个账户最多多少个人登陆
-        filter.setKickoutUrl("/login/login.jsp?kickout=1");
         log.debug("KickoutSessionControlFilter bean 已创建");
         return filter;
     }

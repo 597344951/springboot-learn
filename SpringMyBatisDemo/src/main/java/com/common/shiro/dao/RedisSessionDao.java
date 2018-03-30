@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
+import com.common.util.CacheUtil;
+
 @Component
 public class RedisSessionDao extends EnterpriseCacheSessionDAO {
 
@@ -51,6 +53,7 @@ public class RedisSessionDao extends EnterpriseCacheSessionDAO {
     protected void doDelete(Session session) {
         log.info("删除session:" + session);
         redisTemplate.delete(session.getId());
+        CacheUtil.clearLogCountCache(session);
     }
 
 }

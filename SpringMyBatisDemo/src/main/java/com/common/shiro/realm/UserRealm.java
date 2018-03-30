@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.shiro.ShiroException;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -17,13 +18,14 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
 
-import com.common.shiro.authc.MyToken;
 import com.common.util.PasswordHelper;
 
 public class UserRealm extends AuthorizingRealm {
 
     /** 日志输出对象 **/
     public static final Log logout = LogFactory.getLog(UserRealm.class);
+    
+    public static final String REALM_NAME = "UserPassWordRealm";
 
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
@@ -42,9 +44,6 @@ public class UserRealm extends AuthorizingRealm {
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token)
             throws AuthenticationException {
         logout.info("尝试使用 用户名/密码方式登陆");
-        MyToken mt = (MyToken) token;
-        if (mt.getLoginType() != 0) return null;
-
         String username = (String) token.getPrincipal();
         if (username == null) {
             throw new UnknownAccountException();// 没找到帐号
@@ -62,8 +61,13 @@ public class UserRealm extends AuthorizingRealm {
         // authenticationInfo = new SimpleAuthenticationInfo(username,ps,getName());
 
         return authenticationInfo;
-
-
     }
+ 
+    @Override
+    public String getName() {
+       return REALM_NAME;
+    } 
+    
+    
 
 }
